@@ -1,0 +1,16 @@
+{
+  "billInfo": {
+    "orderId": null,
+    "eKey": null,
+    "psw": "111111"
+  },
+  "Title": "newBill",
+  "Equip": {
+    "Name": "绝影魔",
+    "Level": "飞升161级",
+    "Server": "万紫千红",
+    "PriceAssume": "506",
+    "PriceRequire": "980.00",
+    "Url": "https://xy2.cbg.163.com/equip?s=405&eid=202003231400213-405-CQNOYHGMGF7W"
+  }
+}
