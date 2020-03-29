@@ -14,10 +14,10 @@ self.UUID = function () {
 // 基本信息
 self.appName = 'auto_cbg'
 self.localStorage = storages.create(self.appName)
-self.clientName = self.localStorage.get('config.clientName',"")
+self.clientName = self.localStorage.get('config.clientName', "")
 self.clientAlias = self.localStorage.get('config.clientAlias')
 if (!self.clientAlias) self.clientAlias = device.product
-self.versionInfo = 'v1.0.2 200325'
+self.versionInfo = 'v1.0.4 200327 22:39'
 self.apiHost = 'http://39.97.229.104'
 self.serverHost = self.localStorage.get('serversetting_ip', '111.225.10.139') // 脚本控制终端
 
@@ -26,6 +26,7 @@ self.refreshCount = 5 // 刷新后获取前几个商品
 self.buyerSelectIndex = 0 // 使用第几个角色购买
 self.psw = '123456' // 默认密码
 self.keyBoard = function () {
+  var ra = new RootAutomator()
   this.xBegin = -device.width / 6
   this.yBegin = 1600
   this.xLength = device.width / 3
@@ -36,11 +37,11 @@ self.keyBoard = function () {
     var y = Math.floor((val - 1) / 3) + 1
     var posX = x * this.xLength + this.xBegin
     var posY = y * this.yLength + this.yBegin
-    RootAutomator.press(posX, posY, 50)
+    ra.press(posX, posY, 50)
   }
 }
 
-if (self.clientName=="") {
+if (self.clientName == "") {
   self.localStorage.put('config.clientName', self.UUID())
 }
 

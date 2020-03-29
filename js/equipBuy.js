@@ -33,7 +33,7 @@ self.buyCurrent = (psw) => {
   if (needConfirm == null) return false
   global.devServer.debug('equipBuy.getPlayerList()')
   var buyerList = global.equipBuy.getPlayerList()
-  global.devServer.report(JSON.stringify({
+  global.devServer.warn(JSON.stringify({
     title: 'buyer',
     data: buyerList
   })) // 上报当前账号信息

@@ -62,7 +62,7 @@ self.refreshList = (returnItemCount) => {
     var newItemInfo = global.equipList.info(newItem)
     if (JSON.stringify(currentItem) != JSON.stringify(newItemInfo)) {
       // 刷新完成
-      global.devServer.report(JSON.stringify({
+      global.devServer.warn(JSON.stringify({
         title: '刷新完成',
         status: 0,
         item: newItemInfo

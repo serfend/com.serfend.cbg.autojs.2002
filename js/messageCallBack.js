@@ -71,7 +71,7 @@ self.newBill = (e) => {
     price: data.Equip.PriceRequire,
     psw: psw
   }
-  global.devServer.report(JSON.stringify({
+  global.devServer.warn(JSON.stringify({
     title: '新的订单',
     data: {
       targetItem: targetItem,

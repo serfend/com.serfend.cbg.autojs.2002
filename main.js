@@ -141,7 +141,7 @@ while (true) {
   var isEnd = false
   sleep(1500)
   if (lastRunOperation == -1) {
-    global.devServer.report('clientStop')
+    global.devServer.warn('clientStop')
     toast('用户主动停止')
     isEnd = true
   }

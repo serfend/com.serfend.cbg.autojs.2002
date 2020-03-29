@@ -1,3 +1,4 @@
+auto()
 evalJs('init', () => {
   evalJs('messageCallBack', () => {
     evalJs('equipList', () => {
@@ -93,7 +94,7 @@ self.buyGood = (goodItem) => {
     items[i].checkResult = checkResult
   }
 
-  global.devServer.report(JSON.stringify({
+  global.devServer.error(JSON.stringify({
     title: "target good Item not found",
     data: {
       target: goodItem,

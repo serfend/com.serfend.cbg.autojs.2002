@@ -10,7 +10,6 @@ importClass('java.io.OutputStream')
 importClass('java.io.PrintWriter')
 importClass('java.net.Socket')
 importClass('java.net.UnknownHostException')
-
 self.Tcp = function (ip, port) {
   console.log('connect to ' + ip + ':' + port)
   this.socket = new Socket(ip, port)
@@ -54,7 +53,12 @@ self.Tcp = function (ip, port) {
     while (tcp.connected) {
       try {
         var tmpMsg = tcp.bufferedReader.read()
-        buffer.push(tmpMsg)
+        if (tmpMsg == 0) {
+          console.log('newMsg:'+buffer.length)
+          tcp.onMessage({ data: buffer })
+          buffer = []
+        } else
+          buffer.push(tmpMsg)
       } catch (e) {
         console.error(e)
         tcp.disconnect()
@@ -63,33 +67,9 @@ self.Tcp = function (ip, port) {
     }
   }
   this.innerRecvReader = function () {
-    var lastBufLength = 0
-    var msgIntentInterval = 10
-    var noChangeTime = 0
-    while (true) {
-      sleep(msgIntentInterval)
-      var thisBufLength = buffer.length
-      if (thisBufLength != lastBufLength) {
-        msgIntentInterval = 10
-        noChangeTime = 0
-        lastBufLength = thisBufLength
-      }
-      else {
-        noChangeTime++
-        if (noChangeTime % 100 == 0) {
-          if (tcp.heartBeatPackage != null) {
-            tcp.sendJson(JSON.stringify(tcp.heartBeatPackage))
-          }
-        }
-        if (msgIntentInterval < 1000) { msgIntentInterval++ }
-        if (lastBufLength > 0 && noChangeTime > 10) {
-          tcp.onMessage({
-            data: buffer
-          })
-          lastBufLength = 0
-          buffer = []
-        }
-      }
+    while (tcp.connected) {
+      tcp.sendJson(JSON.stringify(tcp.heartBeatPackage))
+      sleep(2000)
     }
   }
   var recvThread = threads.start(this.innerRecv)
@@ -100,3 +80,19 @@ var method = global.tcp.initCallBack
 global.tcp = self
 self = {}
 method()
+
+// var client = new self.Tcp('192.168.43.222', 8009)
+// client.onMessage = (e) => {
+//   var str = String.fromCharCode.apply(null, e.data)
+//   console.log(str)
+//   client.send(JSON.stringify({
+//     Title: 'usrMsg',
+//     data: str
+//   }))
+// }
+// client.onDisconnect = (e) => {
+//   console.log('client disconnect')
+// }
+// client.heartBeatPackage = {
+//   Title: 'msgHeartBeat'
+// }
