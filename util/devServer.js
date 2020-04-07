@@ -4,6 +4,11 @@ self.devServer = function () {
     start: global.utils.parseTime(new Date()),
     clientName: global.config.clientName
   }
+  this.options = {
+    headers: {
+      Device: this.selfConfig.clientName
+    }
+  }
   this.host = global.config.apiHost + '/log/report'
   this.sendingQueue = []
   this.report = function (msg, rank, username) {
@@ -38,7 +43,7 @@ self.devServer = function () {
         if (!target.username) target.username = global.config.clientName
         target.message = target.msg
         delete target.msg
-        var res = http.postJson(reporter.host, target)
+        var res = http.postJson(reporter.host, target, reporter.options)
       }
       sleep(200)
     }

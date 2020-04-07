@@ -18,7 +18,6 @@ self.invoke = (title, e) => {
 
 self.threadRunCallBack = function () {
   while (true) {
-    sleep(1000)
     var newTask = global.messageCallBack.messageCallBackData.cbQueue.shift(0, 1)
     if (newTask) {
       var readyToRun = newTask.cb(newTask.e)
@@ -50,8 +49,8 @@ self.cmdSetClientName = (e) => {
 
 // 服务器心跳包
 self.msgHeartBeat = (e) => {
-  global.devServer.debug('server heartBeat ,local:' + lastRunOperation)
   lastRunOperation = new Date()
+  e.client.sendHeartBeat(false)
   return true
 }
 

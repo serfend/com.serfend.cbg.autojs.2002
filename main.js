@@ -6,8 +6,7 @@ var fileLoad = '/file/load'
 var fileDownLoad = '/file/download'
 var appName = 'auto.cbg'
 var header = {
-  'x-client-type': 'autojs',
-  'x-client-version': app.autojs.versionName
+  'User-Agent': 'autojs ' + app.autojs.versionName + ' cbgClient' 
 }
 var NetException = (status, msg) => {
   this.message = msg

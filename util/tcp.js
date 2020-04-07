@@ -38,7 +38,7 @@ self.Tcp = function (ip, port) {
     this.onDisconnect({ date: new Date() })
   }
   this.send = function (msg) {
-    console.log('tcp.send:' + msg)
+    // console.log('tcp.send:' + msg)
     this.bw.writeBytes(msg)
   }
   this.sendJson = function (msg) {
@@ -54,7 +54,7 @@ self.Tcp = function (ip, port) {
       try {
         var tmpMsg = tcp.bufferedReader.read()
         if (tmpMsg == 0) {
-          console.log('newMsg:'+buffer.length)
+          // console.log('newMsg:'+buffer.length)
           tcp.onMessage({ data: buffer })
           buffer = []
         } else
@@ -66,9 +66,18 @@ self.Tcp = function (ip, port) {
       }
     }
   }
+
+  this.sendHeartBeat = function (needReply) {
+    if (tcp.heartBeatPackage) {
+      tcp.heartBeatPackage.Stamp = new Date().getTime()
+      tcp.heartBeatPackage.NeedReply = needReply
+      tcp.sendJson(JSON.stringify(tcp.heartBeatPackage))
+    }
+  }
+
   this.innerRecvReader = function () {
     while (tcp.connected) {
-      tcp.sendJson(JSON.stringify(tcp.heartBeatPackage))
+      tcp.sendHeartBeat(true)
       sleep(2000)
     }
   }

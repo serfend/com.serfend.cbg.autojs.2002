@@ -17,7 +17,7 @@ self.localStorage = storages.create(self.appName)
 self.clientName = self.localStorage.get('config.clientName', "")
 self.clientAlias = self.localStorage.get('config.clientAlias')
 if (!self.clientAlias) self.clientAlias = device.product
-self.versionInfo = 'v1.0.4 200327 22:39'
+self.versionInfo = 'v1.0.7 20200406'
 self.apiHost = 'http://39.97.229.104'
 self.serverHost = self.localStorage.get('serversetting_ip', '111.225.10.139') // 脚本控制终端
 
@@ -28,9 +28,9 @@ self.psw = '123456' // 默认密码
 self.keyBoard = function () {
   var ra = new RootAutomator()
   this.xBegin = -device.width / 6
-  this.yBegin = 1600
+  this.yBegin = 1150
   this.xLength = device.width / 3
-  this.yLength = 150
+  this.yLength = 100
   this.keyDown = (val) => {
     if (val == 0) val = 11
     var x = (val - 1) % 3 + 1

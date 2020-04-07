@@ -40,6 +40,8 @@ self.buyCurrent = (psw) => {
   if (buyerList.length > 0) {
     global.equipBuy.selectBuyer(global.config.buyerSelectIndex)
     global.devServer.debug('equipBuy.payCurrent')
+    var useWalletBtn = id('cb_wallet_use').findOne()
+    if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
     global.equipBuy.payCurrent(psw, needConfirm)
   } else {
     back()
@@ -107,8 +109,7 @@ self.selectBuyer = (index) => {
 
 self.clickBuyButtton = () => {
   var isDirectBuy = false
-  sleep(1500)
-  for (var i = 0; i < 3; i++) {
+  for (var i = 0; i < 5; i++) {
     var btn = id('btn_buy').findOne(500)//btnArea.children()[1]
     if (btn == null) {
       global.devServer.error('buy_btn now find')
