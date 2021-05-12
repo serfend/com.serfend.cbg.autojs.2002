@@ -68,7 +68,7 @@ self.newBill = (e) => {
     level: data.Equip.Level,
     server: data.Equip.Server,//此处传回的Server名称无`天界-`前缀
     price: data.Equip.PriceRequire,
-    psw: psw
+    psw: data.billInfo.psw
   }
   global.devServer.warn(JSON.stringify({
     title: '新的订单',
@@ -80,7 +80,13 @@ self.newBill = (e) => {
   global.main.buyGood(targetItem)
   global.equipList.resetList()
   global.messageCallBack.messageCallBackData.running = false
-
+  global.devServer.warn(JSON.stringify({
+    title: '新的订单处理完成',
+    data: {
+      targetItem: targetItem,
+      rawData: data
+    }
+  }))
   return true
 }
 

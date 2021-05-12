@@ -84,7 +84,6 @@ self.Tcp = function (ip, port) {
   var recvThread = threads.start(this.innerRecv)
   var recvReadThread = threads.start(this.innerRecvReader)
 }
-
 var method = global.tcp.initCallBack
 global.tcp = self
 self = {}

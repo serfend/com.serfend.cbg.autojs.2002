@@ -26,10 +26,12 @@ self.payCurrent = (psw, needConfirm) => {
   if (payingAcTryTime <= 0) {
     global.devServer.error('pay activity not found')
   }
-  global.devServer.debug('input password:' + psw)
+  global.devServer.warn('input password:' + psw)
+  sleep(500)
   var keyBoard= new global.config.keyBoard()
   for (var i = 1; i < psw.length; i++) {
     keyBoard.keyDown(psw[i])
+    sleep(100)
   }
 }
 
