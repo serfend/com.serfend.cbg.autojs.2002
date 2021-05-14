@@ -1,14 +1,12 @@
 'ui';
 
-
+var appName = 'auto_cbg'
+const db = storages.create(appName)
 var ServerSetting = (function () {
   //继承至ui.Widget
   util.extend(ServerSetting, ui.Widget)
 
   function ServerSetting() {
-    var appName = 'auto_cbg'
-    ServerSetting.prototype.config = storages.create(appName)
-
     ui.Widget.call(this)
     var settingname_ip = 'config.serverHost'
     this.defineAttr("ip", (view, attr, value, defineSetter) => {
@@ -17,17 +15,17 @@ var ServerSetting = (function () {
     var settingname_clientName = 'config.clientAlias'
     this.defineAttr("clientName", (view, attr, value, defineSetter) => {
       view._clientName.setText(value.toString())
-      ServerSetting.prototype.config.put(settingname_clientName, value)
+      db.put(settingname_clientName, value)
     })
     this[settingname_ip + 'afterTextChanged'] = function (value) {
-      ServerSetting.prototype.config.put(settingname_ip, value.toString())
+      db.put(settingname_ip, value.toString())
     }
     this[settingname_clientName + 'afterTextChanged'] = function (value) {
-      ServerSetting.prototype.config.put(settingname_clientName, value.toString())
+      db.put(settingname_clientName, value.toString())
     }
     ServerSetting.prototype.onFinishInflation = function (view) {
-      view._ip.setText(ServerSetting.prototype.config.get(settingname_ip, '1.1.1.1'))
-      view._clientName.setText(ServerSetting.prototype.config.get(settingname_clientName, device.product))
+      view._ip.setText(db.get(settingname_ip, '1.1.1.1'))
+      view._clientName.setText(db.get(settingname_clientName, device.product))
       view._ip.addTextChangedListener(new android.text.TextWatcher({ afterTextChanged: this[settingname_ip + 'afterTextChanged'] }))
       view._clientName.addTextChangedListener(new android.text.TextWatcher({ afterTextChanged: this[settingname_clientName + 'afterTextChanged'] }))
     }
@@ -63,7 +61,7 @@ ui.layout(
       </frame>
       <frame>
         <vertical>
-          <ServerSetting />
+          <checkbox id="_billDisableWalletCheck" text="是否取消勾选钱包" marginLeft="4" marginRight="6" />
         </vertical>
       </frame>
       <frame>
@@ -72,10 +70,17 @@ ui.layout(
         </vertical>
       </frame>
     </viewpager>
+    <fab id="add" w="auto" h="auto" src="@drawable/ic_add_black_48dp"
+      margin="16" layout_gravity="bottom|right" tint="#ffffff" />
   </vertical>
 )
-
-ui.viewpager.setTitles(["服务器", "未开放", "未开放"])
+const bCheck = ui._billDisableWalletCheck
+const billDisableWalletCheck = 'billDisableWalletCheck'
+bCheck.setChecked(db.get(billDisableWalletCheck, false))
+bCheck.on('click', (v) => {
+  db.put(billDisableWalletCheck, v.checked)
+})
+ui.viewpager.setTitles(["服务器", "下单设置", "未开放"])
 ui.tabs.setupWithViewPager(ui.viewpager)
 
 
