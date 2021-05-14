@@ -40,8 +40,12 @@ self.buyCurrent = (psw) => {
   if (buyerList.length > 0) {
     global.equipBuy.selectBuyer(global.config.buyerSelectIndex)
     global.devServer.debug('equipBuy.payCurrent')
-    var useWalletBtn = id('cb_wallet_use').findOne()
-    if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
+    const need_disbale_use_wallet = global.config.localStorage.get('billDisableWalletCheck')
+    console.log('钱包勾选取消:', need_disbale_use_wallet)
+    if (need_disbale_use_wallet) {
+      var useWalletBtn = id('cb_wallet_use').findOne()
+      if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
+    }
     global.equipBuy.payCurrent(psw, needConfirm)
   } else {
     back()
@@ -58,7 +62,7 @@ self.payCurrent = (psw, needConfirm) => {
 // 获取可用的收货角色列表
 self.getPlayerList = () => {
   global.devServer.debug('checkBuyerList')
-  var listEnterButton = className("android.widget.TextView").text("请选择收货角色").exists()
+  var listEnterButton = false // className("android.widget.TextView").text("请选择收货角色").exists()
   if (listEnterButton) {
     listEnterButton = className("android.widget.TextView").text("请选择收货角色").findOne(500)
     listEnterButton.parent().parent().click() // linerLayout.click
