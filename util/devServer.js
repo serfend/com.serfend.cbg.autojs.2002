@@ -18,6 +18,8 @@ self.devServer = function () {
     //   rank: rank,
     //   username: username
     // })
+    // const t = console[rank] || console.info
+    // t(username, msg, method)
   }
   var reporter = this
   this.infoCode = {

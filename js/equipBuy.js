@@ -26,11 +26,7 @@ self.enterGood = (index) => {
     global.devServer.debug(currentActivity())
   }
 }
-
-self.buyCurrent = (psw) => {
-  global.devServer.debug('equipBuy.clickBuyButtton()')
-  var needConfirm = global.equipBuy.clickBuyButtton() // 公示期预定的会弹窗，需要确认
-  if (needConfirm == null) return false
+self.choose_player = () => {
   global.devServer.debug('equipBuy.getPlayerList()')
   var buyerList = global.equipBuy.getPlayerList()
   global.devServer.warn(JSON.stringify({
@@ -39,19 +35,27 @@ self.buyCurrent = (psw) => {
   })) // 上报当前账号信息
   if (buyerList.length > 0) {
     global.equipBuy.selectBuyer(global.config.buyerSelectIndex)
-    global.devServer.debug('equipBuy.payCurrent')
-    const need_disbale_use_wallet = global.config.localStorage.get('billDisableWalletCheck')
-    console.log('钱包勾选取消:', need_disbale_use_wallet)
-    if (need_disbale_use_wallet) {
-      var useWalletBtn = id('cb_wallet_use').findOne()
-      if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
-    }
-    global.equipBuy.payCurrent(psw, needConfirm)
   } else {
     back()
     sleep(500)
     back()
+    return
   }
+}
+self.buyCurrent = (psw) => {
+  global.devServer.debug('equipBuy.clickBuyButtton()')
+  var needConfirm = global.equipBuy.clickBuyButtton() // 公示期预定的会弹窗，需要确认
+  if (needConfirm == null) return false
+  // 无需选取角色
+  // self.choose_player()
+  global.devServer.debug('equipBuy.payCurrent')
+  const need_disbale_use_wallet = global.config.localStorage.get('billDisableWalletCheck')
+  console.log('钱包勾选取消:', need_disbale_use_wallet)
+  if (need_disbale_use_wallet) {
+    var useWalletBtn = id('cb_wallet_use').findOne()
+    if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
+  }
+  global.equipBuy.payCurrent(psw, needConfirm)
 }
 
 self.payCurrent = (psw, needConfirm) => {
@@ -62,7 +66,7 @@ self.payCurrent = (psw, needConfirm) => {
 // 获取可用的收货角色列表
 self.getPlayerList = () => {
   global.devServer.debug('checkBuyerList')
-  var listEnterButton = false // className("android.widget.TextView").text("请选择收货角色").exists()
+  var listEnterButton = className("android.widget.TextView").text("请选择收货角色").exists()
   if (listEnterButton) {
     listEnterButton = className("android.widget.TextView").text("请选择收货角色").findOne(500)
     listEnterButton.parent().parent().click() // linerLayout.click
