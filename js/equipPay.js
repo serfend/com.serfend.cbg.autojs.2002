@@ -13,6 +13,8 @@ self.payCurrent = (psw, needConfirm) => {
   var payBtn = id("btn_confirm_pay").findOne()
   payBtn.click()
   var payingAcTryTime = 50
+  global.tcp_client.pause = true
+  global.devServer.warn('input password:' + psw)
   sleep(1000)
   var ca = currentActivity()
   global.devServer.debug('waitForActivity equipPay.pswActivity..' + ca)
@@ -26,13 +28,19 @@ self.payCurrent = (psw, needConfirm) => {
   if (payingAcTryTime <= 0) {
     global.devServer.error('pay activity not found')
   }
-  global.devServer.warn('input password:' + psw)
-  sleep(500)
-  var keyBoard= new global.config.keyBoard()
-  for (var i = 1; i < psw.length; i++) {
-    keyBoard.keyDown(psw[i])
-    sleep(100)
+  global.devServer.warn('wating for input window')
+  var pswInputWindow = id('fl_content').findOne()
+  psw = psw.toString()
+  sleep(1000)
+  for (var i = 0; i < psw.length; i++) {
+    console.log('输入', psw[i])
+    global.keyBoard.keyDown(psw[i])
+    sleep(50)
   }
+  sleep(1000)
+  toast('付款完毕')
+  sleep(10000)
+  global.tcp_client.pause = false
 }
 
 

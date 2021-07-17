@@ -11,7 +11,7 @@ self.devServer = function () {
   this.host = global.config.apiHost + '/log/report'
   this.sendingQueue = []
   this.report = function (msg, rank, username, method) {
-    // console.log(msg)
+    console.log(msg)
     // if (console[method]) console[method](msg)
     // this.sendingQueue.push({
     //   msg: msg,

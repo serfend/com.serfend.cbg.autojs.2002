@@ -6,11 +6,27 @@ evalJs('init', () => {
         evalJs('equipBuy', () => {
           evalJs('equipPay', () => {
             global.devServer.debug('load serversetting')
+            // toast('测试屏幕点击')
+            global.keyBoard = new global.config.keyBoard()
+            // sleep(5000)
+            // for (let i = 1; i <= 11; i++) {
+            //   console.log('测试点击' + i)
+            //   global.keyBoard.keyDown(i.toString())
+            //   sleep(2000)
+            // }
+            // toast('测试输入密码')
+            // sleep(5000)
+            // var psw = '123456123456123456'
+            // for (var i = 0; i < psw.length; i++) {
+            //   global.keyBoard.keyDown(psw[i])
+            //   sleep(500)
+            //   if (i % 6 == 5) sleep(5000)
+            // }
             execJs('server_setting')
             global.devServer.debug('load complete serversetting')
 
-            var client = new global.tcp.Tcp(global.config.serverHost, 16555)
-            client.onMessage = (e) => {
+            global.tcp_client = new global.tcp.Tcp(global.config.serverHost, 16555)
+            global.tcp_client.onMessage = (e) => {
               var info = String.fromCharCode.apply(null, e.data)
               global.devServer.debug('fromServer:' + info)
               var data = {}
@@ -27,12 +43,12 @@ evalJs('init', () => {
                 // 使用专门的回调处理
                 global.messageCallBack.invoke(title, {
                   data: data,
-                  client: client
+                  client: global.tcp_client
                 })
               }
             }
-            client.onDisconnect = (e) => { global.devServer.debug(e) }
-            client.heartBeatPackage = {
+            global.tcp_client.onDisconnect = (e) => { global.devServer.debug(e) }
+            global.tcp_client.heartBeatPackage = {
               Title: 'msgHeartBeat'
             }
 
@@ -43,8 +59,7 @@ evalJs('init', () => {
               Type: 'phone',
               DeviceId: global.config.clientName
             }
-
-            client.sendJson(JSON.stringify(initPackage))
+            global.tcp_client.sendJson(JSON.stringify(initPackage))
             global.equipList.resetList()
 
             // 每隔10分钟检查一次是否需要更新
@@ -58,6 +73,7 @@ evalJs('init', () => {
             // global.equipList.enterGood(1)
             // var success = global.equipBuy.buyCurrent('258147')
             // console.timeEnd('mainAction')
+
           })
         })
       })
