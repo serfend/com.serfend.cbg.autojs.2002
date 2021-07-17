@@ -74,10 +74,10 @@ self.Tcp = function (ip, port) {
       tcp.sendJson(JSON.stringify(tcp.heartBeatPackage))
     }
   }
-
+  this.pause = false
   this.innerRecvReader = function () {
     while (tcp.connected) {
-      tcp.sendHeartBeat(true)
+      if (!tcp.pause) tcp.sendHeartBeat(true)
       sleep(2000)
     }
   }
