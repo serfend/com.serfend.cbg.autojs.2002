@@ -3,6 +3,10 @@ self.messageCallBackData = {
   running: false // 占用ui的线程需要进行单线程执行
 }
 self.invoke = (title, e) => {
+  if (global.messageCallBack.messageCallBackData.running) {
+    console.warn('当前有订单正在进行中')
+    return false
+  }
   if (!global.messageCallBack[title]) {
     console.warn('cmd[' + title + '] have no callback insolve')
     global.messageCallBack.default(e)
@@ -23,6 +27,7 @@ self.threadRunCallBack = function () {
       var readyToRun = newTask.cb(newTask.e)
       // TODO 日后需要支持多线程
     }
+    sleep(10)
   }
 }
 
@@ -55,7 +60,6 @@ self.msgHeartBeat = (e) => {
 }
 
 self.newBill = (e) => {
-  if (global.messageCallBack.messageCallBackData.running) return false
   global.messageCallBack.messageCallBackData.running = true
   var psw = global.config.psw
   // global.equipList.enterGood(0)
@@ -68,6 +72,7 @@ self.newBill = (e) => {
     level: data.Equip.Level,
     server: data.Equip.Server,//此处传回的Server名称无`天界-`前缀
     price: data.Equip.PriceRequire,
+    goodsCreate: data.Equip.goodsCreate,
     psw: data.billInfo.psw
   }
   global.devServer.warn(JSON.stringify({
@@ -77,6 +82,23 @@ self.newBill = (e) => {
       rawData: data
     }
   }))
+  const start_bill_delay = global.config.localStorage.get('start_bill_delay')
+  const startDate = new Date(targetItem.goodsCreate) - 0 + start_bill_delay
+  while (true) {
+    const wait_time = new Date() - 0 < startDate
+    if (wait_time > 1e3) {
+      if (Math.floor(wait_time / 10e3) % 3 == 0) {
+        toast(targetItem.name + '等待' + (wait_time / 1e3) + '秒')
+      }
+      sleep(1000)
+    }
+    else if (wait_time > 1e2)
+      sleep(10)
+    else if (wait_time > 0)
+      sleep(1)
+    else
+      break
+  }
   global.main.buyGood(targetItem)
   global.equipList.resetList()
   global.messageCallBack.messageCallBackData.running = false

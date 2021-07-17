@@ -61,7 +61,16 @@ ui.layout(
       </frame>
       <frame>
         <vertical>
-          <checkbox id="_billDisableWalletCheck" text="是否取消勾选钱包" marginLeft="4" marginRight="6" />
+          <card w="*" h="300" margin="10 5" cardCornerRadius="5dp"
+            foreground="?selectableItemBackground">
+            <vertical>
+              <checkbox id="_billDisableWalletCheck" text="是否取消勾选钱包" marginLeft="4" marginRight="6" />
+            </vertical>
+            <vertical>
+              <text text="下单间隔(单位/ms)" margin="10 0" />
+              <input id="start_bill_delay" text="" />
+            </vertical>
+          </card>
         </vertical>
       </frame>
       <frame>
@@ -80,6 +89,13 @@ bCheck.setChecked(db.get(billDisableWalletCheck, false))
 bCheck.on('click', (v) => {
   db.put(billDisableWalletCheck, v.checked)
 })
+const start_bill_delay = 'start_bill_delay'
+ui.start_bill_delay.setText(db.get(start_bill_delay, '600000'))
+ui.start_bill_delay.addTextChangedListener(new android.text.TextWatcher({
+  afterTextChanged: (e) => {
+    db.put(start_bill_delay, e.ToString())
+  }
+}))
 ui.viewpager.setTitles(["服务器", "下单设置", "未开放"])
 ui.tabs.setupWithViewPager(ui.viewpager)
 
