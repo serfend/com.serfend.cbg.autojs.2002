@@ -4,7 +4,7 @@ self.messageCallBackData = {
 }
 self.invoke = (title, e) => {
   if (global.messageCallBack.messageCallBackData.running) {
-    console.warn('当前有订单正在进行中')
+    global.messageCallBack.msgHeartBeat(e)
     return false
   }
   if (!global.messageCallBack[title]) {
@@ -72,7 +72,7 @@ self.newBill = (e) => {
     level: data.Equip.Level,
     server: data.Equip.Server,//此处传回的Server名称无`天界-`前缀
     price: data.Equip.PriceRequire,
-    goodsCreate: data.Equip.goodsCreate,
+    goodsCreate: data.Equip.GoodsCreate,
     psw: data.billInfo.psw
   }
   global.devServer.warn(JSON.stringify({
@@ -82,26 +82,12 @@ self.newBill = (e) => {
       rawData: data
     }
   }))
-  const start_bill_delay = global.config.localStorage.get('start_bill_delay')
-  const startDate = new Date(targetItem.goodsCreate) - 0 + start_bill_delay
-  while (true) {
-    const wait_time = new Date() - 0 < startDate
-    if (wait_time > 1e3) {
-      if (Math.floor(wait_time / 10e3) % 3 == 0) {
-        toast(targetItem.name + '等待' + (wait_time / 1e3) + '秒')
-      }
-      sleep(1000)
-    }
-    else if (wait_time > 1e2)
-      sleep(10)
-    else if (wait_time > 0)
-      sleep(1)
-    else
-      break
-  }
+  const start_bill_delay = Number(global.config.localStorage.get('start_bill_delay', 600e3))
+  targetItem.startDate = new Date(targetItem.goodsCreate).getTime() - 8 * 3600e3 + start_bill_delay
+  console.warn('订单下单' + new Date(targetItem.goodsCreate) + ',' + targetItem.startDate + ',' + new Date(targetItem.startDate) + ',发布时间' + targetItem.goodsCreate)
+
   global.main.buyGood(targetItem)
   global.equipList.resetList()
-  global.messageCallBack.messageCallBackData.running = false
   global.devServer.warn(JSON.stringify({
     title: '新的订单处理完成',
     data: {
@@ -109,6 +95,7 @@ self.newBill = (e) => {
       rawData: data
     }
   }))
+  global.messageCallBack.messageCallBackData.running = false
   return true
 }
 

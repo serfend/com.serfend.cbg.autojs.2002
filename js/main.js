@@ -104,8 +104,9 @@ self.buyGood = (goodItem) => {
     }
     if (checkResult.nameEqual && checkResult.levelEqual && checkResult.serverEqual && checkResult.priceEqual < 0.01) {
       console.log('buy item:' + i)
+      global.equipBuy.waitProtectTime(targetItem)
       global.equipList.enterGood(i)
-      return global.equipBuy.buyCurrent(goodItem.psw)
+      return global.equipBuy.buyCurrent(goodItem)
     }
     items[i].checkResult = checkResult
   }

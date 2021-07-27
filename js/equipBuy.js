@@ -3,28 +3,30 @@ self.buyerActivity = 'com.netease.cbg.activities.ChoseRoleActivity'
 self.orderActivity = 'com.netease.cbg.activities.AddOrderActivity'
 self.enterGood = (index) => {
   var ca = currentActivity()
-  global.devServer.debug(ca + '.enterGood:' + index)
-  if (ca == global.equipBuy.activity) {
+  const callback = {}
+  callback[global.equipBuy.activity] = () => {
     back()
     waitForActivity(global.equipList.activity)
     return global.equipBuy.enterGood(index)
-  } else if (ca == global.equipBuy.orderActivity) {
+  }
+  callback[global.equipBuy.orderActivity] = () => {
     back()
     waitForActivity(global.equipBuy.activity)
     return global.equipBuy.enterGood(index)
-  } else if (ca == global.equipBuy.buyerActivity) {
+  }
+  callback[ca == global.equipBuy.buyerActivity] = () => {
     back()
     waitForActivity(global.equipBuy.orderActivity)
     return global.equipBuy.enterGood(index)
   }
-  else {
-    var list = global.equipList.fullList()
-    var item = list.children()[index]
-    item.click()
-    global.devServer.debug('waitForActivity equipBuy.activity')
-    waitForActivity(global.equipBuy.activity)
-    global.devServer.debug(currentActivity())
-  }
+  global.devServer.debug(ca + '.enterGood:' + index)
+  if (callback[ca]) return callback[ca]() // 返回订单列表页面
+  var list = global.equipList.fullList()
+  var item = list.children()[index]
+  item.click()
+  global.devServer.debug('waitForActivity equipBuy.activity')
+  waitForActivity(global.equipBuy.activity)
+  global.devServer.debug(currentActivity())
 }
 self.choose_player = () => {
   global.devServer.debug('equipBuy.getPlayerList()')
@@ -42,7 +44,7 @@ self.choose_player = () => {
     return
   }
 }
-self.buyCurrent = (psw) => {
+self.buyCurrent = (targetItem) => {
   global.devServer.debug('equipBuy.clickBuyButtton()')
   var needConfirm = global.equipBuy.clickBuyButtton() // 公示期预定的会弹窗，需要确认
   if (needConfirm == null) return false
@@ -55,9 +57,29 @@ self.buyCurrent = (psw) => {
     var useWalletBtn = id('cb_wallet_use').findOne()
     if (useWalletBtn.checked) useWalletBtn.click() // 取消选择
   }
-  global.equipBuy.payCurrent(psw, needConfirm)
+  global.equipBuy.payCurrent(targetItem.psw, needConfirm)
 }
-
+self.waitProtectTime = (targetItem) => {
+  const startDate = targetItem.startDate
+  let wait_time
+  while (true) {
+    wait_time = startDate - new Date()
+    if (wait_time > 1e3) {
+      console.warn(wait_time + ',' + startDate + ',' + Math.floor(wait_time / 1e3) + ',' + Math.floor(wait_time / 1e3) % 10)
+      if (Math.floor(wait_time / 1e3) % 10 == 0) {
+        toast(targetItem.name + '等待' + wait_time / 1e3 + '秒')
+      }
+      sleep(1000)
+    }
+    else if (wait_time > 1e2)
+      sleep(10)
+    else if (wait_time > 0)
+      sleep(1)
+    else
+      break
+  }
+  console.warn('时间已到，开始下单')
+}
 self.payCurrent = (psw, needConfirm) => {
   global.equipBuy.clickPayButton()
   return global.equipPay.payCurrent(psw, needConfirm)
