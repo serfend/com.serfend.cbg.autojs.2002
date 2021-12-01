@@ -1,7 +1,7 @@
 console.show()
 
 var lastRunOperation = new Date()
-var host = 'http://39.97.229.104'
+var host = 'https://serfend.top'
 var fileLoad = '/file/load'
 var fileDownLoad = '/file/download'
 var appName = 'auto.cbg'
@@ -34,7 +34,7 @@ var loadHttpContent = (filename, cb, filepath) => {
       console.error('httpContentFail[' + filename + ']:' + fileInfo.message)
       return
     }
-    var url2 = host + fileDownLoad + "?fileid=" + fileInfo.data.file.id
+    var url2 = host + fileDownLoad + "?fileid=" + fileInfo.data.model.id
     http.get(url2, {
       headers: header
     }, (d, e) => {
